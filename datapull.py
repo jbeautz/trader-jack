@@ -3,15 +3,13 @@
 
 from yahoofinancials import YahooFinancials
 import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
+
 
 # Select Tickers and stock history dates
-tickers = ['CANE','SOYB','CORN', 'DE', 'CNHI','CAT','AGCO', 'BRFS', 'TSN','TSLA', 'ADM', 'FPI', 'CB', 'BRF','SPY']
+tickers = ['CANE','SOYB','CORN', 'DE', 'CNHI','CAT','AGCO', 'BRFS', 'TSN', 'ADM', 'FPI', 'CB', 'BRF','SPY']
 freq = 'daily'
 start_date = '2010-10-01'
-end_date = '2020-01-01'
+end_date = '2014-10-03'
 
 
 # Function to clean data extracts
@@ -21,6 +19,7 @@ def clean_stock_data(stock_data_list):
         if 'type' not in rec.keys():
             new_list.append(rec)
     return new_list
+
 
 # Construct yahoo financials objects for data extraction
 financial = {}
@@ -41,6 +40,9 @@ delta_master = pd.DataFrame()
 for ticker in tickers:
     daily_master = daily_master.merge(daily[ticker], how='outer', left_index=True, right_index=True)
     daily_master['{}_delta'.format(ticker)] = daily_master['{}_close'.format(ticker)]-daily_master['{}_open'.format(ticker)]
+
+daily_master = daily_master.reset_index()
+
 
 '''
 # Plot correlation heat map of feature set
