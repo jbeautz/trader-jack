@@ -3,10 +3,13 @@
 
 from yahoofinancials import YahooFinancials
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 # Select Tickers and stock history dates
-tickers = ['CANE','SOYB','CORN', 'DE', 'CNHI','CAT','AGCO', 'BRFS', 'TSN', 'ADM', 'FPI', 'CB', 'BRF','SPY']
+# tickers = ['CANE','SOYB','CORN', 'DE', 'CNHI','CAT','AGCO', 'BRFS', 'TSN', 'ADM', 'FPI', 'CB', 'BRF','SPY']
+
+tickers = ['CORN', 'DE', 'CNHI','CAT','AGCO','SPY']
 freq = 'daily'
 start_date = '2010-10-01'
 end_date = '2014-10-03'
@@ -28,8 +31,9 @@ daily = {}
 for ticker in tickers:
     financial[ticker] = YahooFinancials(ticker)
     tick = financial[ticker].get_historical_price_data(start_date, end_date, freq)[ticker]['prices']
-    tick = pd.DataFrame(clean_stock_data(tick))[['formatted_date','open','adjclose']]
-    tick = tick.rename(columns={'formatted_date': 'date', 'adjclose': '{}_close'.format(ticker), 'open': '{}_open'.format(ticker)})
+    tick = pd.DataFrame(clean_stock_data(tick))[['formatted_date','open','close', 'volume']]
+    tick = tick.rename(columns={'formatted_date': 'date', 'close': '{}_close'.format(ticker), \
+        'open': '{}_open'.format(ticker), 'volume':'{}_vol'.format(ticker)})
     daily[ticker] = tick.set_index('date')
 
 
@@ -43,8 +47,11 @@ for ticker in tickers:
 
 daily_master = daily_master.reset_index()
 
-
 '''
+plt.plot(daily_master['date'],daily_master[['DE_open', 'DE_close']])
+plt.show()
+plt.clf()
+
 # Plot correlation heat map of feature set
 sns.heatmap(data=daily_master.corr())
 
