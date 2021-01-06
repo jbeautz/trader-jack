@@ -7,12 +7,12 @@ import matplotlib.pyplot as plt
 
 
 # Select Tickers and stock history dates
-# tickers = ['CANE','SOYB','CORN', 'DE', 'CNHI','CAT','AGCO', 'BRFS', 'TSN', 'ADM', 'FPI', 'CB', 'BRF','SPY']
 
-tickers = ['CORN', 'DE', 'CNHI','CAT','AGCO','SPY']
+tickers = ['DE', 'CNHI','CAT','AGCO', 'SPY']
+#tickers = ['AAPL', 'MSFT','FB','AMZN', 'SPY']
 freq = 'daily'
 start_date = '2010-10-01'
-end_date = '2014-10-03'
+end_date = '2020-10-03'
 
 
 # Function to clean data extracts
@@ -31,9 +31,9 @@ daily = {}
 for ticker in tickers:
     financial[ticker] = YahooFinancials(ticker)
     tick = financial[ticker].get_historical_price_data(start_date, end_date, freq)[ticker]['prices']
-    tick = pd.DataFrame(clean_stock_data(tick))[['formatted_date','open','close', 'volume']]
+    tick = pd.DataFrame(clean_stock_data(tick))[['formatted_date','open','close']]
     tick = tick.rename(columns={'formatted_date': 'date', 'close': '{}_close'.format(ticker), \
-        'open': '{}_open'.format(ticker), 'volume':'{}_vol'.format(ticker)})
+        'open': '{}_open'.format(ticker)})
     daily[ticker] = tick.set_index('date')
 
 
@@ -43,9 +43,21 @@ delta_master = pd.DataFrame()
 
 for ticker in tickers:
     daily_master = daily_master.merge(daily[ticker], how='outer', left_index=True, right_index=True)
-    daily_master['{}_delta'.format(ticker)] = daily_master['{}_close'.format(ticker)]-daily_master['{}_open'.format(ticker)]
+    delta_master['{}_delta'.format(ticker)] = daily_master['{}_close'.format(ticker)]-daily_master['{}_open'.format(ticker)]
 
-daily_master = daily_master.reset_index()
+#Reset Index so that we can create a lag
+daily_master = delta_master.reset_index()
+
+#Create 1 Day Lag Feature
+for ticker in tickers:
+    daily_master['{}_delta_1'.format(ticker)] = daily_master['{}_delta'.format(ticker)].shift(1)
+
+#Remove NaN from dataset after creating lag
+daily_master = daily_master.dropna()
+
+
+
+
 
 '''
 plt.plot(daily_master['date'],daily_master[['DE_open', 'DE_close']])
