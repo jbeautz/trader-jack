@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 from interpret.glassbox import ExplainableBoostingClassifier, LogisticRegression
 from interpret import show
 
-from datapull import daily_master, tickers
+from datapull_model_build import daily_master, tickers
 #Set time period to base predictions
 # i.e. t = 7 will use week before to make prediction for next day.
 t = 2

@@ -1,4 +1,4 @@
-# Script to pull and format financial data to feed trading algorithm
+# Script to pull and format financial data to aid in model selection
 # By Jack Beautz 01/01/21
 
 from yahoofinancials import YahooFinancials
@@ -8,11 +8,11 @@ import matplotlib.pyplot as plt
 
 # Select Tickers and stock history dates
 
-tickers = ['DE', 'CNHI','CAT','AGCO', 'SPY']
-#tickers = ['AAPL', 'MSFT','FB','AMZN', 'SPY']
+tickers = pd.read_csv('sandp.csv')
+#tickers = ['AAPL', 'MSFT','FB','AMZN', 'SPY', 'DOW']
 freq = 'daily'
-start_date = '2010-10-01'
-end_date = '2020-10-03'
+start_date = '2020-10-03'
+end_date = '2021-01-15'
 
 
 # Function to clean data extracts
@@ -27,21 +27,27 @@ def clean_stock_data(stock_data_list):
 # Construct yahoo financials objects for data extraction
 financial = {}
 daily = {}
+fails = []
 
-for ticker in tickers:
-    financial[ticker] = YahooFinancials(ticker)
-    tick = financial[ticker].get_historical_price_data(start_date, end_date, freq)[ticker]['prices']
-    tick = pd.DataFrame(clean_stock_data(tick))[['formatted_date','open','close']]
-    tick = tick.rename(columns={'formatted_date': 'date', 'close': '{}_close'.format(ticker), \
-        'open': '{}_open'.format(ticker)})
-    daily[ticker] = tick.set_index('date')
-
+for ticker in tickers['Symbol']:
+    try:
+        financial[ticker] = YahooFinancials(ticker)
+        tick = financial[ticker].get_historical_price_data(start_date, end_date, freq)[ticker]['prices']
+        tick = pd.DataFrame(clean_stock_data(tick))[['formatted_date','open','close']]
+        tick = tick.rename(columns={'formatted_date': 'date', 'close': '{}_close'.format(ticker), \
+            'open': '{}_open'.format(ticker)})
+        daily[ticker] = tick.set_index('date')
+    except:
+        print(ticker)
+        fails.append(ticker)
 
 # Join into one daily master dataset
 daily_master = pd.DataFrame()
 delta_master = pd.DataFrame()
 
-for ticker in tickers:
+tickers['Symbol'] = [tick for tick in tickers['Symbol'] if tick not in fails]
+
+for ticker in tickers['Symbol']:
     daily_master = daily_master.merge(daily[ticker], how='outer', left_index=True, right_index=True)
     delta_master['{}_delta'.format(ticker)] = daily_master['{}_close'.format(ticker)]-daily_master['{}_open'.format(ticker)]
 
@@ -49,8 +55,9 @@ for ticker in tickers:
 daily_master = delta_master.reset_index()
 
 #Create 1 Day Lag Feature
-for ticker in tickers:
+for ticker in tickers['Symbol']:
     daily_master['{}_delta_1'.format(ticker)] = daily_master['{}_delta'.format(ticker)].shift(1)
+    daily_master['{}_delta_2'.format(ticker)] = daily_master['{}_delta'.format(ticker)].shift(2)
 
 #Remove NaN from dataset after creating lag
 daily_master = daily_master.dropna()
