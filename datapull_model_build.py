@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 
 tickers = pd.read_csv('sandp.csv')
 #tickers = ['AAPL', 'MSFT','FB','AMZN', 'SPY', 'DOW']
+
 freq = 'daily'
 start_date = '2020-10-03'
 end_date = '2021-01-15'

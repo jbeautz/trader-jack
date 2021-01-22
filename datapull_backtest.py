@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 # Select Tickers and stock history dates
 
-tickers = ['DE', 'CNHI','CAT','AGCO', 'SPY', 'DOW']
+tickers = ['FANG', 'SLB', 'HES', 'NOV']
 
 def daily(start_date, end_date):
     #tickers = ['AAPL', 'MSFT','FB','AMZN', 'SPY', 'DOW']
@@ -38,3 +38,12 @@ def daily(start_date, end_date):
         d[ticker] = tick.set_index('Datetime')
 
     return d
+
+df = daily('2000-01-03', '2020-12-01')
+
+for ticker in tickers:
+    plt.plot(df[ticker]['High'])
+
+
+plt.show()
+plt.clf()

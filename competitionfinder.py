@@ -25,5 +25,10 @@ for i in range(1000000):
         theset = set
         themax = thiscor
 
-print(theset)
-print(themax)
+
+
+ind = np.argpartition(cor, -10)[-10:]
+for i in in d:
+    print(sets[i])
+    print(cor[i])
+    print()
