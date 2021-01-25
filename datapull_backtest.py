@@ -39,10 +39,12 @@ def daily(start_date, end_date):
 
     return d
 
-df = daily('2000-01-03', '2020-12-01')
+#df = daily('2000-01-03', '2020-12-01')
+df = daily('2021-01-15', '2021-01-22')
 
-for ticker in tickers:
-    plt.plot(df[ticker]['High'])
+
+#for ticker in tickers:
+plt.plot(df['ticker']['High'])
 
 
 plt.show()

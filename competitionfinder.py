@@ -14,7 +14,7 @@ sets = []
 theset = []
 themax = 0
 for i in range(1000000):
-    set = random.sample(list(tickers['Symbol']), 4)
+    set = random.sample(list(tickers) , 3)
     sets.append(set)
     d = pd.DataFrame()
     for ticker in set:
@@ -28,7 +28,7 @@ for i in range(1000000):
 
 
 ind = np.argpartition(cor, -10)[-10:]
-for i in in d:
+for i in d:
     print(sets[i])
     print(cor[i])
     print()

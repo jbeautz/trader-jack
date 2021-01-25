@@ -33,7 +33,7 @@ for tick in tickers:
     X = daily_master.drop(['{}_delta'.format(tick), 'date'], axis=1)
     y = daily_master['{}_delta'.format(tick)]>0
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=2)
 
     ebm = LogisticRegression().fit(X_train, y_train)
 
@@ -53,6 +53,9 @@ plt.bar(score_df['Stocks'],score_df['test_scores'], label='Testing', alpha=.6)
 plt.legend()
 plt.show()
 plt.clf()
+
+FANG_backtest = daily_master
+FANG_backtest['result'] = ebm
 
 
 '''
