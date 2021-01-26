@@ -8,13 +8,30 @@ import matplotlib.pyplot as plt
 
 # Select Tickers and stock history dates
 
-tickers = pd.read_csv('sandp.csv')['Symbol']
-#tickers = ['AAPL', 'MSFT', 'FB', 'GOOGL']
+#ALL S&P500
+#tickers = pd.read_csv('sandp.csv')['Symbol']
+
+#TECH
+tickers = ['AAPL', 'MSFT', 'FB', 'GOOGL']
+
+#LIFE INSURANCE
 #tickers = ['FANG', 'SLB', 'HES', 'NOV']
+
+#ENERGY
+#tickers = ['XOM', 'CVX', 'RDS.A', 'RDS.B']
+
+#CARS
+#tickers = ['TM', 'F', 'HMC', 'GM']
+
+#INSURANCE
+#tickers = ['ALL', 'PGR', 'TRV', 'MET']
+
+#RANDOM
+#tickers = ['DE', 'AAPL', 'MET', 'XOM']
 
 
 freq = 'daily'
-start_date = '2020-01-01'
+start_date = '2001-01-01'
 end_date = '2021-01-22'
 
 
@@ -37,8 +54,8 @@ for ticker in tickers:
         financial[ticker] = YahooFinancials(ticker)
         tick = financial[ticker].get_historical_price_data(start_date, end_date, freq)[ticker]['prices']
         tick = pd.DataFrame(clean_stock_data(tick))[['formatted_date','open','close']]
-        tick = tick.rename(columns={'formatted_date': 'date', 'close': '{}_close'.format(ticker), \
-            'open': '{}_open'.format(ticker)})
+        tick = tick.rename(columns={'formatted_date': 'date', 'close': f'{ticker}_close', \
+            'open': f'{ticker}_open'})
         daily[ticker] = tick.set_index('date')
     except:
         print(ticker)
@@ -52,10 +69,13 @@ tickers = [tick for tick in tickers if tick not in fails]
 
 for ticker in tickers:
     daily_master = daily_master.merge(daily[ticker], how='outer', left_index=True, right_index=True)
-    delta_master['{}_delta'.format(ticker)] = daily_master['{}_close'.format(ticker)]-daily_master['{}_open'.format(ticker)]
+    delta_master[f'{ticker}_delta'] = daily_master[f'{ticker}_close']-daily_master[f'{ticker}_open']
+    delta_master[f'{ticker}_open'] = daily_master[f'{ticker}_open']
+
 
 #Reset Index so that we can create a lag
 daily_master = delta_master.reset_index()
+
 
 #Set time period to base predictions
 # i.e. t = 7 will use week before to make prediction for next day.
@@ -66,7 +86,7 @@ for ticker in tickers:
     for k in range(1,t+1):
             #daily_master['{}_open_{}'.format(ticker, k)] = daily_master['{}_open'.format(ticker)].shift(k)
             #daily_master['{}_close_{}'.format(ticker, k)] = daily_master['{}_close'.format(ticker)].shift(k)
-            daily_master['{}_delta_{}'.format(ticker, k)] = daily_master['{}_delta'.format(ticker)].shift(k)
+            daily_master[f'{ticker}_delta_{k}'] = daily_master[f'{ticker}_delta'].shift(k)
             #daily_master['{}_vol_{}'.format(ticker, k)] = daily_master['{}_vol'.format(ticker)].shift(k)
 
 #Remove NaN from dataset after creating lag
