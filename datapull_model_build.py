@@ -11,8 +11,8 @@ import matplotlib.pyplot as plt
 #ALL S&P500
 #tickers = pd.read_csv('sandp.csv')['Symbol']
 
-#TECH
-tickers = ['AAPL', 'MSFT', 'FB', 'GOOGL']
+#Software
+tickers = [ 'AAPL', 'MSFT']
 
 #LIFE INSURANCE
 #tickers = ['FANG', 'SLB', 'HES', 'NOV']
@@ -31,8 +31,8 @@ tickers = ['AAPL', 'MSFT', 'FB', 'GOOGL']
 
 
 freq = 'daily'
-start_date = '2001-01-01'
-end_date = '2021-01-22'
+start_date = '2011-01-03'
+end_date = '2021-01-27'
 
 
 # Function to clean data extracts
