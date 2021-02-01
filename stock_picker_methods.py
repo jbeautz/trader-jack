@@ -29,7 +29,7 @@ def model(tickers, start_date, end_date):
 
     for tick in tickers:
         y = daily_master[f'{tick}_delta'][:n]> 0 #daily_master[f'{tick}_open'][:n]*.025
-
+        print(tick)
         LogReg = LogisticRegression(max_iter=100000).fit(X1, y)
 
         bt[f'{tick}_predict'] = LogReg.predict_proba(X2)[:,1]
@@ -74,7 +74,9 @@ def model(tickers, start_date, end_date):
         if tdelta >= delta:
             cnt_beat_actual += 1
 
-    return np.round((trader[-1]-1000)/10, 2)
+    trader_return = np.round((trader[-1]-1000)/10, 2)
+    averaging_return = np.round((value[-1]-1000)/10, 2)
+    return trader_return, averaging_return
 
 # Function to clean data extracts
 def clean_stock_data(stock_data_list):
@@ -141,34 +143,21 @@ def aux_data(tickers, start_date, end_date):
 
         # Construct yahoo financials objects for data extraction
         financial = {}
-        daily = {}
-        fails = []
+        aux_daily = {}
 
         for ticker in tickers:
-            try:
-                financial[ticker] = YahooFinancials(ticker)
-                tick = financial[ticker].get_historical_price_data(start_date, end_date, freq)[ticker]['prices']
-                tick = pd.DataFrame(clean_stock_data(tick))[['volume','close']]
-                tick = tick.rename(columns={'close': f'{ticker}_close', \
-                    'volume': f'{ticker}_volume'})
-                daily[ticker] = tick.set_index('date')
-            except:
-                print(ticker)
-                print('HA')
-                fails.append(ticker)
+            financial[ticker] = YahooFinancials(ticker)
+            tick = financial[ticker].get_historical_price_data(start_date, end_date, freq)[ticker]['prices']
+            tick = pd.DataFrame(clean_stock_data(tick))[['volume','open']]
+            aux_daily[ticker] = tick.rename(columns={'open': f'{ticker}_open', \
+                'volume': f'{ticker}_volume'})
 
         # Join into one daily master dataset
         aux = pd.DataFrame()
 
-        tickers = [tick for tick in tickers if tick not in fails]
-
         for ticker in tickers:
-            aux = daily_master.merge(daily[ticker], how='outer', left_index=True, right_index=True)
+            aux = aux.merge(aux_daily[ticker], how='outer', left_index=True, right_index=True)
 
-        #Reset Index so that we can create a lag
-        aux = aux.reset_index()
-
-        print(aux)
         #Find correlation between opening price of pair
         vols = pd.DataFrame()
         opens = pd.DataFrame()

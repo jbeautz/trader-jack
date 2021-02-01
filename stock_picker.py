@@ -17,17 +17,20 @@ end_date = '2021-01-27'
 
 
 
-for idx in range(10):
-    this_set = random.sample(list(all_tickers), 2)
+for idx in range(1000):
+    this_set = random.sample(list(all_tickers), 3)
 
-    this_result = model(this_set, start_date, end_date)
+    this_result, this_averaging = model(this_set, start_date, end_date)
 
     this_vol_cor, this_open_cor, this_vol_avg, this_open_avg \
         = aux_data(this_set, start_date, end_date)
 
-    this_result = {'sets':this_set, 'results':this_result, 'vol_cors':this_vol_cor, \
-        'open_cors':this_open_cor, 'vol_avgs':this_vol_avg, 'open_avgs':this_open_avg}
+    this_result = {'sets':this_set, 'results':this_result, 'averaging':this_averaging, \
+        'vol_cors':this_vol_cor, 'open_cors':this_open_cor, \
+        'vol_avgs':this_vol_avg, 'open_avgs':this_open_avg}
 
     model_results = model_results.append(this_result, ignore_index=True)
 
-print(model_results)
+print(np.mean(model_results['results']))
+print()
+model_results.to_csv('results.csv')

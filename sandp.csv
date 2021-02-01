@@ -92,7 +92,6 @@ CDW,CDW,Information Technology
 CE,Celanese,Materials
 CNC,Centene Corporation,Health Care
 CNP,CenterPoint Energy,Utilities
-CTL,CenturyLink Inc,Communication Services
 CERN,Cerner,Health Care
 CF,CF Industries Holdings Inc,Materials
 SCHW,Charles Schwab Corporation,Financials
@@ -321,7 +320,6 @@ MCO,Moody's Corp,Financials
 MS,Morgan Stanley,Financials
 MSI,Motorola Solutions Inc.,Information Technology
 MSCI,MSCI Inc,Financials
-MYL,Mylan N.V.,Health Care
 NDAQ,Nasdaq Inc.,Financials
 NOV,National Oilwell Varco Inc.,Energy
 NTAP,NetApp,Information Technology
@@ -334,7 +332,6 @@ NEE,NextEra Energy,Utilities
 NLSN,Nielsen Holdings,Industrials
 NKE,Nike Inc.,Consumer Discretionary
 NI,NiSource Inc.,Utilities
-NBL,Noble Energy,Energy
 NSC,Norfolk Southern Corp.,Industrials
 NTRS,Northern Trust Corp.,Financials
 NOC,Northrop Grumman,Industrials
@@ -486,7 +483,6 @@ WELL,Welltower Inc.,Real Estate
 WST,West Pharmaceutical Services,Health Care
 WDC,Western Digital,Information Technology
 WU,Western Union Co,Information Technology
-WRK,WestRock,Materials
 WY,Weyerhaeuser,Real Estate
 WHR,Whirlpool Corp.,Consumer Discretionary
 WMB,Williams Companies,Energy
