@@ -29,11 +29,9 @@ def model(tickers, start_date, end_date):
 
     for tick in tickers:
         y = daily_master[f'{tick}_delta'][:n]> 0 #daily_master[f'{tick}_open'][:n]*.025
-        print(tick)
         LogReg = LogisticRegression(max_iter=100000).fit(X1, y)
 
         bt[f'{tick}_predict'] = LogReg.predict_proba(X2)[:,1]
-
 
     trader = [1000]
     value = [1000]
@@ -161,13 +159,24 @@ def aux_data(tickers, start_date, end_date):
         #Find correlation between opening price of pair
         vols = pd.DataFrame()
         opens = pd.DataFrame()
+
+        vol_dict = {}
+        open_dict = {}
+
         for ticker in tickers:
             vols[ticker] = aux[f'{ticker}_volume']
             opens[ticker] = aux[f'{ticker}_open']
-        vol_cor = np.mean(np.mean(abs(vols.corr())))
-        open_cor = np.mean(np.mean(abs(opens.corr())))
 
-        vol_avg = np.mean(np.mean(vols))
-        open_avg = np.mean(np.mean(opens))
+            vol_dict[f'{ticker}_std'] = np.std(aux[f'{ticker}_volume'])
+            vol_dict[f'{ticker}_avg'] = np.mean(aux[f'{ticker}_volume'])
 
-        return vol_cor, open_cor, vol_avg, open_avg
+            open_dict[f'{ticker}_std'] = np.std(aux[f'{ticker}_open'])
+            open_dict[f'{ticker}_avg'] = np.mean(aux[f'{ticker}_open'])
+
+        vol_cor = np.mean(np.mean(vols.corr()))
+        open_cor = np.mean(np.mean(opens.corr()))
+
+
+        aux_data = [vol_cor, open_cor, list(vol_dict.values()), list(open_dict.values())]
+
+        return aux_data
