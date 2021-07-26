@@ -62,9 +62,12 @@ def model(tickers, start_date, end_date):
             prob = list(bt[f'{tick}_predict'])[day]
             open = list(bt[f'{tick}_open'])[day]
             if prob>=max_prob and prob>.5:
-                tdelta = list(bt[f'{tick}_delta'])[day]*1000/open
-                max_prob = list(bt[f'{tick}_predict'])[day]
+                max_prob = prob
                 max_prob_tick = tick
+
+            if len(max_prob_tick)>0:
+                tdelta = list(bt[f'{max_prob_tick}_delta'])[day]*1000/open
+
 
         trader.append(trader[day] + tdelta)
         if max_prob_tick == max_tick:
@@ -165,18 +168,12 @@ def aux_data(tickers, start_date, end_date):
 
         for ticker in tickers:
             vols[ticker] = aux[f'{ticker}_volume']
-            opens[ticker] = aux[f'{ticker}_open']
 
             vol_dict[f'{ticker}_std'] = np.std(aux[f'{ticker}_volume'])
             vol_dict[f'{ticker}_avg'] = np.mean(aux[f'{ticker}_volume'])
 
-            open_dict[f'{ticker}_std'] = np.std(aux[f'{ticker}_open'])
-            open_dict[f'{ticker}_avg'] = np.mean(aux[f'{ticker}_open'])
-
         vol_cor = np.mean(np.mean(vols.corr()))
-        open_cor = np.mean(np.mean(opens.corr()))
 
-
-        aux_data = [vol_cor, open_cor, list(vol_dict.values()), list(open_dict.values())]
+        aux_data = [vol_cor, list(vol_dict.values())]
 
         return aux_data

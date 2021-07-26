@@ -18,7 +18,7 @@ end_date = '2021-01-01'
 
 
 
-for idx in range(20000):
+for idx in range(10000):
     this_set = random.sample(list(all_tickers), 2)
 
     this_result, this_averaging = model(this_set, start_date, end_date)

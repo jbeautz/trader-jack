@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from read_results import RF_model, LogReg_model
 
 n= int(.80 * len(daily_master))
 m = len(daily_master) - n
@@ -36,7 +37,7 @@ value = [1000]
 
 cnt_right_guess = 0
 cnt_beat_actual = 0
-
+max_ticks = []
 
 for day in range(len(bt)):
     print(f"DAY {day}")
@@ -62,14 +63,17 @@ for day in range(len(bt)):
     tdelta = 0
     max_prob_tick = ""
 
-
     for tick in tickers:
         prob = list(bt[f'{tick}_predict'])[day]
-        open = list(bt[f'{tick}_open'])[day]
         if prob>=max_prob and prob>.5:
-            tdelta = list(bt[f'{tick}_delta'])[day]*1000/open
-            max_prob = list(bt[f'{tick}_predict'])[day]
+            max_prob = prob
             max_prob_tick = tick
+
+    max_ticks.append(max_prob_tick)
+
+    if len(max_prob_tick) > 0:
+        tdelta = list(bt[f'{max_prob_tick}_delta'])[day]*1000/open
+
     print(f"TRADER: Buying $1000 of Best stock pick ({max_tick}) with probability ({np.round(max_prob,4)}) of increase")
     print(f"TRADER: Day {day}: Daily Change {tdelta}")
     print()
@@ -91,7 +95,14 @@ print()
 
 print()
 
-print(f"Bot gives {np.round((trader[-1]-1000)/10, 2)}% return over {len(trader)-1} trading days")
+print('Portfolio Distribution')
+for tick in tickers:
+    print(f"{tick}: {np.round(max_ticks.count(tick)/len(max_ticks)*100,2)}%")
+
+print()
+print()
+
+print(f"Trader Jack gives {np.round((trader[-1]-1000)/10, 2)}% return over {len(trader)-1} trading days")
 print(f"Averagings gives {np.round((value[-1]-1000)/10, 2)}% return over {len(trader)-1} trading days")
 
 plt.plot(trader, color = 'red', label='TRADER JACK')

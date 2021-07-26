@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 #tickers = pd.read_csv('sandp.csv')['Symbol']
 
 #Software
-tickers = [ 'AAPL', 'MSFT']
+tickers = ['MSFT', 'AAPL']
 
 #LIFE INSURANCE
 #tickers = ['FANG', 'SLB', 'HES', 'NOV']
@@ -27,11 +27,11 @@ tickers = [ 'AAPL', 'MSFT']
 #tickers = ['ALL', 'PGR', 'TRV', 'MET']
 
 #RANDOM
-#tickers = ['DE', 'AAPL', 'MET', 'XOM']
+#tickers = ['DE', 'NFLX', 'MET', 'XOM']
 
 
 freq = 'daily'
-start_date = '2011-01-03'
+start_date = '2020-01-03'
 end_date = '2021-01-27'
 
 
