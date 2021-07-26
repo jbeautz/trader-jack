@@ -3,6 +3,7 @@
 # By Jack Beautz 03/27/21
 
 import alpaca_trade_api as tradeapi
+import pandas as pd
 import datetime
 
 # First, open the API connection
@@ -15,7 +16,19 @@ api = tradeapi.REST(
 account = api.get_account()
 
 #while True:
-stocks = ['FB','GOOG']
+tickers = ['FB','GOOG']
+
+raw_hist_data = api.get_barset(tickers, 'day', limit=2)
+hist_data = {}
+for tick in tickers:
+    for day in [0,1]:
+        this_day = vars(raw_hist_data[tick][day])['_raw']
+        for key in this_day.keys():
+            hist_data[f'{tick}_{key}_{day}'] = this_day[key]
+
+print(hist_data)
+
+'''
 
 # Calculate Dollar Amount Available to each trade remaining
 total = float(account.equity)
@@ -34,3 +47,4 @@ for ticker in stocks:
 
     # Code waits 24 hours to repeat
     #time.sleep(60*60*24)
+'''
