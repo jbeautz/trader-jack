@@ -15,18 +15,54 @@ api = tradeapi.REST(
 
 account = api.get_account()
 
-#while True:
+
+# Version 1 will chose between trading on Facebook and Google stock
 tickers = ['FB','GOOG']
 
+
+# Loop occurs once every 24 hours until program is stopped
+#while True:
+
+# Get raw historical data from alpaca api
 raw_hist_data = api.get_barset(tickers, 'day', limit=2)
+
+# Create new dictionary for cleaned and shaped data row for day
 hist_data = {}
+
+# Cleans historical data
 for tick in tickers:
     for day in [0,1]:
         this_day = vars(raw_hist_data[tick][day])['_raw']
         for key in this_day.keys():
             hist_data[f'{tick}_{key}_{day}'] = this_day[key]
 
-print(hist_data)
+# Plugs todays data into model
+FB_invest = logmodel(hist_data, 'FB')
+GOOG_invest = logmodel(hist_data, 'GOOG')
+
+total = float(account.equity)
+
+api.submit_order(
+    symbol=yesterdays_stock,
+    notional=total,
+    side='sell',
+    type='market',
+    time_in_force='day'
+)
+api.submit_order(
+    symbol=todays_stock,
+    notional=total,
+    side='buy',
+    type='market',
+    time_in_force='day'
+)
+
+yesterdays_stock = todays_stock
+
+# Code waits 24 hours to repeat
+#time.sleep(60*60*24)
+
+
 
 '''
 
@@ -45,6 +81,5 @@ for ticker in stocks:
     )
 
 
-    # Code waits 24 hours to repeat
-    #time.sleep(60*60*24)
+
 '''
