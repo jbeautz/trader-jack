@@ -37,49 +37,30 @@ for tick in tickers:
             hist_data[f'{tick}_{key}_{day}'] = this_day[key]
 
 # Plugs todays data into model
-FB_invest = logmodel(hist_data, 'FB')
-GOOG_invest = logmodel(hist_data, 'GOOG')
+todays_stock = lgmodel(hist_data)
 
+# Find current portfolio value
 total = float(account.equity)
 
-api.submit_order(
-    symbol=yesterdays_stock,
-    notional=total,
-    side='sell',
-    type='market',
-    time_in_force='day'
-)
-api.submit_order(
-    symbol=todays_stock,
-    notional=total,
-    side='buy',
-    type='market',
-    time_in_force='day'
-)
-
-yesterdays_stock = todays_stock
-
-# Code waits 24 hours to repeat
-#time.sleep(60*60*24)
-
-
-
-'''
-
-# Calculate Dollar Amount Available to each trade remaining
-total = float(account.equity)
-print(total)
-quant = total/len(stocks)
-# Submit a market order to buy 1 share of each stock
-for ticker in stocks:
+if yesterdays_stock is not null:
     api.submit_order(
-        symbol=ticker,
+        symbol=yesterdays_stock,
+        notional=total,
+        side='sell',
+        type='market',
+        time_in_force='day'
+    )
+
+if todays_stock is not null:
+    api.submit_order(
+        symbol=todays_stock,
         notional=quant,
         side='buy',
         type='market',
         time_in_force='day'
     )
 
+yesterdays_stock = todays_stock
 
-
-'''
+# Code waits 24 hours to repeat
+#time.sleep(60*60*24)
