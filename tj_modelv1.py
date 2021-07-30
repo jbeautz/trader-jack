@@ -4,6 +4,7 @@
 
 import alpaca_trade_api as tradeapi
 import pandas as pd
+import numpy as np
 
 #def lgmodel(today_data, tickers):
 
@@ -16,16 +17,38 @@ api = tradeapi.REST(
 
 account = api.get_account()
 
-raw_data = api.get_barset(tickers, 'day', limit=1000)
+tickers = ['FB', 'GOOG']
+rows = 1000
 
-df = pd.Dataframe()
+raw_data = api.get_barset(tickers, 'day', limit=rows)
+
+df_list = []
+cols = []
 
 # Cleans historical data
 for tick in tickers:
-    for day in range(2,1000):
-        for d in range(1,3):
-            this_day = vars(raw_hist_data[tick][day])['_raw']
-            for key in this_day.keys():
-                df[f'{tick}_{key}_{day-d}'] = this_day[key]
+    for day in range(rows):
+        this_day = vars(raw_data[tick][day])['_raw']
+        for key in this_day.keys():
+            df_list.append(this_day[key])
 
-print(df)
+labels=list(this_day.keys())
+cols = []
+
+for tick in tickers:
+    for l in labels:
+        cols.append(f'{tick}_{l}')
+
+c = len(this_day.keys())*2
+r = 1000
+
+df_list = np.reshape(df_list, (r, c))
+df = pd.DataFrame(df_list, columns=cols)
+
+for tick in tickers:
+    df = df.drop(f'{tick}_t', axis=1)
+
+for tick in tickers:
+    df[f'{tick}_t'] = df[f'{tick}_c'].shift(-1)
+
+df = df.dropna()
