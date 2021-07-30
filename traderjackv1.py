@@ -37,11 +37,12 @@ for tick in tickers:
             hist_data[f'{tick}_{key}_{day}'] = this_day[key]
 
 # Plugs todays data into model
-todays_stock = lgmodel(hist_data)
+todays_stock = lgmodel(hist_data, tickers)
 
 # Find current portfolio value
 total = float(account.equity)
 
+# If stock was bought yesterday, sell all shares
 if yesterdays_stock is not null:
     api.submit_order(
         symbol=yesterdays_stock,
@@ -51,15 +52,17 @@ if yesterdays_stock is not null:
         time_in_force='day'
     )
 
+# If model selected stock for today, buy with portfolio value
 if todays_stock is not null:
     api.submit_order(
         symbol=todays_stock,
-        notional=quant,
+        notional=total,
         side='buy',
         type='market',
         time_in_force='day'
     )
 
+# Set todays stock as yesterdays stock
 yesterdays_stock = todays_stock
 
 # Code waits 24 hours to repeat
